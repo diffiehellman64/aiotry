@@ -1,0 +1,58 @@
+version: '3.3'
+
+services:
+
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: dhcloud_nginx
+  #   volumes:
+  #     - ./file_storage:/mnt/
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - 80:9000
+  #     - 24678:24678
+  #     - 8000:8000
+  #   depends_on:
+  #     - api
+
+  db:
+    image: postgres:13.4-alpine
+    container_name: aiotry_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - env/db.env
+
+  api:
+    build: ./api
+    container_name: aiotry_api
+    command: sh -c 'python main.py'
+    volumes:
+      - ./api/:/app/
+    env_file:
+      - env/api.env
+      - env/db.env
+    ports:
+      - 9001:8080
+    depends_on:
+      - db
+
+  # gui:
+  #   build: ./gui
+  #   container_name: dhcloud_gui
+  #   command: 'yarn dev'
+  #   volumes:
+  #     - ./gui/:/app/
+  #   # ports:
+  #     # - 9005:9000
+  #     # - 24678:24678
+  #   env_file:
+  #     - .env/gui.env
+  #     - .env/oauth.env
+
+  # redis:
+  #   image: redis
+  #   container_name: dhcloud_redis
+
+volumes:
+  postgres_data:
