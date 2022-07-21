@@ -1,4 +1,7 @@
 from aiohttp import web
+from models.fill_db import create_database
+
+create_database()
 
 routes = web.RouteTableDef()
 
